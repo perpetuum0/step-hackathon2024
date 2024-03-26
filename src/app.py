@@ -1,8 +1,11 @@
 from PySide6.QtGui import QIcon, QAction
-from PySide6.QtWidgets import QApplication, QVBoxLayout, QTextEdit, QWidget,QPushButton,QSizePolicy,QMainWindow, QHBoxLayout,QStackedWidget
-from PySide6.QtCore import Signal, QObject ,QSize
+from PySide6.QtWidgets import QApplication, QVBoxLayout, QTextEdit, QWidget,QPushButton,\
+    QSizePolicy,QMainWindow, QHBoxLayout,QStackedWidget,QLabel
+from PySide6.QtCore import Signal, QObject ,QSize,Qt
 
-from tabs import *
+from encryptor import EncryptorTab
+from keygen import KeygenTab
+from user_guide import InfoTab
 from typings import *
 
 class KeyManager(QMainWindow):
@@ -32,7 +35,7 @@ class KeyManager(QMainWindow):
         self.encryptorButton.clicked.connect(lambda: self.switchToTab(Tabs.Encryptor))
         self.logoutButton = QPushButton("Выйти из аккаунта", self.sidebar)
         
-        self.infoTab = InformationTab(self.contentsWidget)
+        self.infoTab = InfoTab(self.contentsWidget)
         self.encryptorTab = EncryptorTab(self.contentsWidget)
         self.keygenTab = KeygenTab(self.contentsWidget)
         self.contentsWidget.addWidget(self.infoTab)
