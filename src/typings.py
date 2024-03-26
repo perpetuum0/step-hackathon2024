@@ -4,6 +4,12 @@ class Tabs(Enum):
     Info = 0
     Encryptor = 1
     Keygen = 2
+
+class SidebarButtons(Enum):
+    Info = Tabs.Info
+    Encryptor = Tabs.Encryptor
+    Keygen = Tabs.Keygen
+    Authorization = "auth"
     
 class EncryptionAlgo(Enum):
     sha256 = 0
