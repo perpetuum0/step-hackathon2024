@@ -8,17 +8,18 @@ class InfoTab(QWidget):
         super(InfoTab, self).__init__(parent)
         self.infoTextArea = QScrollArea(self)
         self.infoBox = QWidget(self.infoTextArea)
-        
         self.infoText = QLabel(self.infoBox)
-        self.infoText.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+        self.infoText.setStyleSheet("font-size:14px")
+        # self.infoText.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
         self.infoText.setWordWrap(True)
+        self.infoText.setAlignment(Qt.AlignmentFlag.AlignTop)
         
         self.infoTextArea.setWidget(self.infoBox)
         self.infoTextArea.setStyleSheet("border:none")
         self.infoTextArea.setWidgetResizable(True)
         
         #TODO error handling
-        with open("./resources/info.txt", "r") as article:
+        with open("./resources/article.html", "r") as article:
             self.infoText.setText(article.read())
             
         #Layouts

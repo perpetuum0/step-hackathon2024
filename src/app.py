@@ -14,7 +14,7 @@ class KeyManager(QMainWindow):
         super(KeyManager, self).__init__()
         self.setFont("Helvetica")
         self.setWindowTitle("Steps with a Shield")
-        self.setMinimumSize(QSize(650, 350))
+        self.setMinimumSize(QSize(650, 430))
         self.resize(QSize(810,490))
         self.accountUsername = ''
         

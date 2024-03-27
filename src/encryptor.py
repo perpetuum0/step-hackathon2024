@@ -39,9 +39,18 @@ class EncryptorTab(QWidget):
         self.encryptor = Encryptor()
         self.clipboard = QClipboard(self)
         self.infoText = QLabel(self)
-        self.infoText.setText("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque tristique lobortis dui, venenatis scelerisque dolor sagittis at. Vivamus lacus massa, pharetra id mollis sed, mattis venenatis ligula. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eros metus, condimentum ac pellentesque quis, dapibus eget lorem. Aenean ut aliquet libero, non efficitur odio.")
+        self.infoText.setMinimumHeight(140)
+        self.infoText.setText("\
+Шифрование - это процесс преобразования информации таким образом, \
+чтобы она стала неразборчивой для посторонних лиц, но при этом могла \
+быть восстановлена получателем с помощью специального ключа. \
+Шифрование применяется повсеместно в сфере информационной \
+безопасности, включая защиту личных данных, банковских транзакций, \
+обмена электронными сообщениями и многое другое. \
+На этой странице вы можете опробовать различные алгоритмы шифрования.\
+")
         self.infoText.setWordWrap(True)
-        # self.infoText.setMinimumHeight(100)
+        self.infoText.setStyleSheet("font-size:13.5px")
         
         self.inputField = QLineEdit(self)
         self.inputField.setPlaceholderText("Введите текст для шифровки")
@@ -75,6 +84,7 @@ class EncryptorTab(QWidget):
         self.resultCopyButton.setMinimumSize(95,24)
         self.resultCopyButton.clicked.connect(self.copyToClipboard)
         self.resultTextField = QTextEdit("Здесь появится зашифрованный текст...")
+        self.resultTextField.setFont("Courier New")
         self.resultTextField.setReadOnly(True)
         
         self.resultLabelBoxLayout = QVBoxLayout(self.resultLabelBox)
@@ -95,6 +105,7 @@ class EncryptorTab(QWidget):
         self.selectBoxLayout.addWidget(self.BLAKE2sButton,1,3)
         
         self.layout_ = QVBoxLayout(self)
+        self.layout_.setContentsMargins(10,10,10,10)
         self.layout_.addWidget(self.infoText)
         self.layout_.addWidget(self.inputField)
         self.layout_.addWidget(self.encryptButton)

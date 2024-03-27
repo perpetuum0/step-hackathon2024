@@ -25,17 +25,29 @@ class KeygenTab(QWidget):
         super(KeygenTab, self).__init__(parent)
         self.clipboard = QClipboard(self)
         self.infoText = QLabel(self)
-        self.infoText.setText("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque tristique lobortis dui, venenatis scelerisque dolor sagittis at. Vivamus lacus massa, pharetra id mollis sed, mattis venenatis ligula. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eros metus, condimentum ac pellentesque quis, dapibus eget lorem. Aenean ut aliquet libero, non efficitur odio.")
+        self.infoText.setText("\
+Иметь надежные пароли - это ключевой аспект обеспечения безопасности \
+в Интернете. Слабые пароли могут быть легко взломаны хакерами, что \
+может привести к утере доступа к аккаунтам и краже личной информации. \
+Хакеры могут использовать различные методы, такие как словарные \
+атаки, перебор паролей или использование уязвимостей в системе, чтобы \
+получить доступ к учетной записи. Поэтому важно использовать \
+уникальные, сложные пароли и регулярно их обновлять, чтобы защитить \
+свои аккаунты от взлома. Здесь вы можете сгенерировать надежный пароль, \
+выбрав длину и разрешённые символы.\
+")
         self.infoText.setWordWrap(True)
+        self.infoText.setStyleSheet("font-size:13.5px")
         
         self.lengthBox = QWidget(self)
         self.lengthLabel = QLabel(self.lengthBox)
         self.lengthLabel.setText("Длина пароля:")
         self.lengthInput = QSpinBox(self.lengthBox)
+        self.lengthInput.setMinimumSize(100,24)
         self.lengthInput.setMinimum(1)
         self.lengthInput.setMaximum(128)
         self.lengthInput.setValue(16)
-        # self.lengthSlider TODO:
+        # self.lengthSlider TODO
         
         self.optionsBox = QWidget(self)
         self.checked=3
@@ -56,7 +68,7 @@ class KeygenTab(QWidget):
         self.generateButton.setMinimumSize(110,24)
         self.generateButton.clicked.connect(self.generate)
         self.generateField=QLineEdit(self.generatorBox)
-        self.generateField.setFont("Courier")
+        self.generateField.setFont("Courier New")
         self.generateField.setPlaceholderText("Здесь будет ваш сгенерированный пароль...")
         self.generateField.setReadOnly(True)
         self.copyButton=QPushButton(self.generatorBox)
@@ -69,9 +81,9 @@ class KeygenTab(QWidget):
 
         ##Layouts
         self.lengthBoxLayout = QHBoxLayout(self.lengthBox)
+        self.lengthBoxLayout.setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.lengthBoxLayout.addWidget(self.lengthLabel)
         self.lengthBoxLayout.addWidget(self.lengthInput)
-        # TODO self.lengthBoxLayout.addWidget(self.lenghtSlider)
         
         self.optionsBoxLayout = QGridLayout(self.optionsBox)
         self.optionsBoxLayout.setSpacing(10)
@@ -86,16 +98,15 @@ class KeygenTab(QWidget):
         self.generatorBoxLayout.addWidget(self.copyButton)
         
         
-        self.infoText.setMinimumHeight(100)
+        self.infoText.setMinimumHeight(143)
         self.layout_ = QVBoxLayout(self)
+        self.layout_.setContentsMargins(10,10,10,10)
         self.layout_.setAlignment(Qt.AlignmentFlag.AlignTop)
-        # self.layout_.setContentsMargins(15,15,15,100)
-        # self.layout_.setContentsMargins()
+        self.layout_.setSpacing(0)
         self.layout_.addWidget(self.infoText)
-        # self.layout_.setStretch(0, 2)
-        self.layout_.setSpacing(12)
         self.layout_.addWidget(self.lengthBox)
         self.layout_.addWidget(self.optionsBox)
+        self.layout_.addSpacing(9)
         self.layout_.addWidget(self.generatorBox)
         self.setLayout(self.layout_)
     
