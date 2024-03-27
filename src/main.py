@@ -1,6 +1,7 @@
 if __name__ == "__main__":
     import sys
     from app import KeyManager
+    import db
     from PySide6.QtWidgets import QApplication
     app = QApplication()
     app.setStyleSheet("""
@@ -16,4 +17,6 @@ if __name__ == "__main__":
     QPushButton:pressed { background-color:#3464B6; border:none }
     """)
     keyManager = KeyManager()
-    sys.exit(app.exec())
+    app.exec()
+    db.close()
+    sys.exit()

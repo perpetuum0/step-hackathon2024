@@ -1,10 +1,23 @@
 from PySide6.QtGui import QIcon, QAction, QMouseEvent,QPixmap,QPalette
-from PySide6.QtWidgets import QApplication, QVBoxLayout, QTextEdit, QWidget,QPushButton,QDialog,QLineEdit,QStackedWidget,\
+from PySide6.QtWidgets import QApplication, QVBoxLayout, QTextEdit, QWidget,QPushButton,QDialog,QLineEdit,QStackedWidget,QMessageBox,\
     QSizePolicy,QMainWindow, QHBoxLayout,QStackedWidget,QLabel
 from PySide6.QtCore import Signal, QObject ,QSize,Qt
-
+import db
+from encryptor import encrypt
 class Authorization:
-    pass
+    #TODO: auth logs
+    def signup(username, password) -> bool:
+        if not db.check_user(username):
+            db.add_user(username, encrypt(password))
+            return True
+        else:
+            return False
+    
+    def login(username, password) -> bool:
+        if encrypt(password)==db.get_user_password(username):
+            return True
+        else:
+            return False
 
 class HyperlinkLabel(QLabel):
     clicked = Signal()
@@ -18,6 +31,8 @@ class HyperlinkLabel(QLabel):
         return super().mouseReleaseEvent(ev)
 
 class AuthDialog(QWidget):
+    done = Signal(str)
+    
     def __init__(self):
         super(AuthDialog, self).__init__()
         self.setMaximumSize(330,370)
@@ -30,6 +45,8 @@ class AuthDialog(QWidget):
         self.loginForm.newAccountButton.clicked.connect(self.switchForm)
         self.signupForm = SignupForm(self.authForms)
         self.signupForm.newAccountButton.clicked.connect(self.switchForm)
+        self.signupForm.done.connect(self.switchForm)
+        self.loginForm.done.connect(self.loginDone)
         self.authForms.addWidget(self.loginForm)
         self.authForms.addWidget(self.signupForm)
         self.authForms.setCurrentWidget(self.loginForm)
@@ -46,9 +63,14 @@ class AuthDialog(QWidget):
         self.currentFormIndex = self.currentFormIndex + (1 if self.currentFormIndex == 0 else -1)
         self.authForms.setCurrentIndex(self.currentFormIndex)
         
+    def loginDone(self,str):
+        self.hide()
+        self.done.emit(str)
 class SignupForm(QWidget):
+    done = Signal()
     def __init__(self,parent:QWidget):
         super(SignupForm, self).__init__(parent)
+        self.messageBox = QMessageBox(self)
         self.usernameInput = QLineEdit(self)
         self.usernameLabel = QLabel("Имя пользователя",self)
         self.passwordInput = QLineEdit(self)
@@ -56,6 +78,7 @@ class SignupForm(QWidget):
         self.passwordConfirmInput = QLineEdit(self)
         self.passwordConfirmLabel = QLabel("Повторите пароль",self)
         self.signupButton = QPushButton("Зарегистрироваться", self)
+        self.signupButton.clicked.connect(self.signupAttempt)
         self.signupButton.setMinimumSize(180,24)
         self.newAccountButton = HyperlinkLabel("Уже зарегистрированы?",self)
         self.signupButton.setMinimumHeight(24)
@@ -79,13 +102,31 @@ class SignupForm(QWidget):
         self.setLayout(self.layout_)
         
     def signupAttempt(self):
-        #valdiate password confirmation and new account info 
-        pass
-            
+        if not self.usernameInput.text():
+            self.messageBox.warning(self,"Ошибка", "Введите имя пользователя!")
+        elif not self.passwordInput.text():
+            self.messageBox.warning(self,"Ошибка", "Введите пароль!")
+        elif self.passwordInput.text() != self.passwordConfirmInput.text():
+            self.messageBox.warning(self,"Ошибка", "Пароли не совпадают.",QMessageBox.StandardButton.Ok)
+        else:
+            if Authorization.signup(
+                self.usernameInput.text(),
+                self.passwordInput.text()
+            ):
+                self.messageBox.information(self, "Регистрация", "Вы успешно зарегистрировались!", QMessageBox.StandardButton.Ok)
+                self.done.emit()
+                self.usernameInput.setText("")
+                self.passwordInput.setText("")
+                self.passwordConfirmInput.setText("")
+            else:
+                self.messageBox.warning(self,"Ошибка", "Аккаунт с таким именем пользователя уже существует.",QMessageBox.StandardButton.Ok)
 class LoginForm(QWidget):
+    done=Signal(str)
+    
     def __init__(self,parent:QWidget):
         super(LoginForm, self).__init__(parent)
         
+        self.messageBox = QMessageBox(self)
         self.usernameInput = QLineEdit(self)
         self.usernameLabel = QLabel("Имя пользователя",self)
         self.passwordInput = QLineEdit(self)
@@ -113,5 +154,18 @@ class LoginForm(QWidget):
         self.setLayout(self.layout_)
         
     def loginAttempt(self):
-        print(self.window().size())
-        pass
+        if not self.usernameInput.text():
+            self.messageBox.warning(self,"Ошибка", "Введите имя пользователя!")
+        elif not self.passwordInput.text():
+            self.messageBox.warning(self,"Ошибка", "Введите пароль!")
+        else:
+            if Authorization.login(
+                self.usernameInput.text(),
+                self.passwordInput.text()
+            ):
+                self.messageBox.information(self, "Вход в аккаунт", "Вы успешно вошли в аккаунт!", QMessageBox.StandardButton.Ok)
+                self.done.emit(self.usernameInput.text())
+                self.usernameInput.setText("")
+                self.passwordInput.setText("")
+            else:
+                self.messageBox.warning(self,"Ошибка", "Вы ввели неверные данные для входа.",QMessageBox.StandardButton.Ok)

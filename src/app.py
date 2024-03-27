@@ -1,4 +1,4 @@
-from PySide6.QtGui import QIcon, QAction
+from PySide6.QtGui import QIcon, QAction,QPixmap,QImage
 from PySide6.QtWidgets import QApplication, QVBoxLayout, QTextEdit, QWidget,QPushButton,\
     QSizePolicy,QMainWindow, QHBoxLayout,QStackedWidget,QLabel
 from PySide6.QtCore import Signal, QObject ,QSize,Qt
@@ -20,6 +20,7 @@ class KeyManager(QMainWindow):
         
         #Widgets
         self.authDialog = AuthDialog()
+        self.authDialog.done.connect(self.addAccount)
         self.centralWidget_ = QWidget()
         self.centralWidget_.setSizePolicy(QSizePolicy.Policy.Expanding,
                                    QSizePolicy.Policy.Expanding)
@@ -45,8 +46,12 @@ class KeyManager(QMainWindow):
         self.encryptorButton.clicked.connect(
             lambda: self.sidebarButtonClicked(self.encryptorButton)
         )
-        self.authButton = SidebarButton(SidebarButtons.Authorization, self.sidebar)
+        self.sidebarAuthBox=QWidget()
+        self.authButton = SidebarButton(SidebarButtons.Authorization, self.sidebarAuthBox)
         self.authButton.clicked.connect(self.authButtonClicked)
+        self.accountLabel = SidebarButton(SidebarButtons.Account,self.sidebarAuthBox)
+        self.accountLabel.setFixedHeight(50)
+        self.accountLabel.setVisible(False)
         
         self.infoTab = InfoTab(self.contentsWidget)
         self.encryptorTab = EncryptorTab(self.contentsWidget)
@@ -55,6 +60,12 @@ class KeyManager(QMainWindow):
         self.contentsWidget.addWidget(self.encryptorTab)
         self.contentsWidget.addWidget(self.keygenTab)
         #Sidebar
+        self.sidebarAuthLayout = QVBoxLayout(self.sidebarAuthBox)
+        self.sidebarAuthLayout.setContentsMargins(0,0,0,0)
+        self.sidebarAuthLayout.setSpacing(0)
+        self.sidebarAuthLayout.addWidget(self.accountLabel)
+        self.sidebarAuthLayout.addWidget(self.authButton)
+        
         self.sidebarItemsLayout = QVBoxLayout(self.sidebarItemsBox)
         self.sidebarItemsLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.sidebarItemsLayout.setSpacing(5)
@@ -65,8 +76,8 @@ class KeyManager(QMainWindow):
         
         self.sidebarLayout = QVBoxLayout(self.sidebar)
         self.sidebarLayout.addWidget(self.sidebarItemsBox)
-        self.sidebarLayout.addWidget(self.authButton)
-        self.sidebarLayout.setAlignment(self.authButton, Qt.AlignmentFlag.AlignBottom)
+        self.sidebarLayout.addWidget(self.sidebarAuthBox)
+        self.sidebarLayout.setAlignment(self.sidebarAuthBox, Qt.AlignmentFlag.AlignBottom)
         self.sidebarLayout.setContentsMargins(8,8,8,8)
         self.sidebarLayout.setSpacing(0)
         self.sidebar.setLayout(self.sidebarLayout)
@@ -106,6 +117,11 @@ class KeyManager(QMainWindow):
                 buttonTab = Tabs.Encryptor
         self.switchToTab(button.buttonType.value)
 
+    def addAccount(self, username):
+        self.authButton.setText("Сменить аккаунт")
+        self.accountLabel.setText(username)
+        self.accountLabel.setVisible(True)
+
     def switchToTab(self, tab: Tabs):
         match tab:
             case Tabs.Info:
@@ -128,12 +144,11 @@ class SidebarButton(QPushButton):
         font-weight:600;
         font-size:14px;
         text-align:left;
-        height:100px;
     }
     QPushButton:hover { background-color:#2B5091 }
     QPushButton:checked { background-color:#3464B6; border:none }
     QPushButton:pressed {background-color:#3464B6; border:none }
-            """
+"""
     
     def __init__(self,btnType: SidebarButtons,parent:QWidget):
         super(SidebarButton, self).__init__(parent)
@@ -143,20 +158,35 @@ class SidebarButton(QPushButton):
         self.setStyleSheet(self.style)
         self.setCheckable(True)
         self.setIconSize(QSize(25,25))
-        # self.layout().setContentsMargins(10,0,0,0)
+        iconPath = ''
         match btnType:
             case SidebarButtons.Info:
                 self.setText("Информация")
-                self.setIcon(QIcon("resources/infoIcon.png"))
+                iconPath = "resources/infoIcon.png"
             case SidebarButtons.Keygen:
                 self.setText("Генератор паролей")
-                self.setIcon(QIcon("resources/keygenIcon.png"))
+                iconPath = "resources/keygenIcon.png"
             case SidebarButtons.Encryptor:
-                self.setIcon(QIcon("resources/encryptIcon.png"))
+                iconPath = "resources/encryptIcon.png"
                 self.setText("Шифратор")
             case SidebarButtons.Authorization:
-                self.setIcon(QIcon("resources/loginIcon.png"))
+                iconPath = "resources/loginIcon.png"
                 self.setText("Войти в аккаунт")
                 # self.setStyleSheet("""color:white;
                 #                     QPushButton:checked { background-color:#3464B6; border:none}""")
                 self.setCheckable(False)
+            case SidebarButtons.Account:
+                self.setCheckable(False)
+                self.setStyleSheet("""
+                    QPushButton {
+                    color: white;
+                    border-radius:5px;
+                    border:none;
+                    font-weight:600;
+                    font-size:14px;
+                    text-align:left;
+                }""")
+                iconPath = "resources/accountIcon.png"
+        icon = QImage(iconPath)
+        icon.invertPixels(QImage.InvertMode.InvertRgb)
+        self.setIcon(QIcon(QPixmap(icon)))

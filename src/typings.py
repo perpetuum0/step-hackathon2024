@@ -10,7 +10,7 @@ class SidebarButtons(Enum):
     Encryptor = Tabs.Encryptor
     Keygen = Tabs.Keygen
     Authorization = "auth"
-    
+    Account="account"
 class EncryptionAlgo(Enum):
     sha256 = 0
     sha512 = 1

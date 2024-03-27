@@ -134,3 +134,6 @@ class EncryptorTab(QWidget):
         self.clipboard.setText(
             self.resultTextField.toPlainText()
         )
+
+def encrypt(data:str)->str:
+    return Encryptor().encrypt(data)
