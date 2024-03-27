@@ -108,9 +108,9 @@ class EncryptorTab(QWidget):
         self.layout_.setContentsMargins(10,10,10,10)
         self.layout_.addWidget(self.infoText)
         self.layout_.addWidget(self.inputField)
+        self.layout_.addWidget(self.encryptionSelectBox)
         self.layout_.addWidget(self.encryptButton)
         self.layout_.setAlignment(self.encryptButton, Qt.AlignmentFlag.AlignCenter)
-        self.layout_.addWidget(self.encryptionSelectBox)
         self.layout_.addWidget(self.resultBox)
         
         self.setLayout(self.layout_)

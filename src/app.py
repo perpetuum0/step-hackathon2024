@@ -1,11 +1,11 @@
 from PySide6.QtGui import QIcon, QAction,QPixmap,QImage
-from PySide6.QtWidgets import QApplication, QVBoxLayout, QTextEdit, QWidget,QPushButton,\
+from PySide6.QtWidgets import QApplication, QVBoxLayout, QTextEdit, QWidget,QPushButton,QMenuBar,\
     QSizePolicy,QMainWindow, QHBoxLayout,QStackedWidget,QLabel
 from PySide6.QtCore import Signal, QObject ,QSize,Qt
 
 from encryptor import EncryptorTab
 from keygen import KeygenTab
-from user_guide import InfoTab
+from user_guide import InfoTab, GuideDialog
 from authorization import AuthDialog
 from typings import *
 
@@ -18,8 +18,14 @@ class KeyManager(QMainWindow):
         self.resize(QSize(810,490))
         self.accountUsername = ''
         
-        
         #Widgets
+        menuBar = QMenuBar(self)
+        helpMenu = menuBar.addMenu("Помощь")
+        guideAction = QAction("Руководство пользователя", helpMenu)
+        guideAction.triggered.connect(self.guideButtonClicked)
+        helpMenu.addAction(guideAction)
+        
+        self.guideDialog = GuideDialog()
         self.authDialog = AuthDialog()
         self.authDialog.done.connect(self.addAccount)
         self.centralWidget_ = QWidget()
@@ -120,6 +126,10 @@ class KeyManager(QMainWindow):
             case self.encryptorButton:
                 buttonTab = Tabs.Encryptor
         self.switchToTab(button.buttonType.value)
+
+    def guideButtonClicked(self, ev):
+        self.guideDialog.show()
+        self.guideDialog.raise_()
 
     def addAccount(self, username):
         self.accountUsername = username
