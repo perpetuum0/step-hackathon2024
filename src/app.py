@@ -16,6 +16,7 @@ class KeyManager(QMainWindow):
         self.setWindowTitle("Steps with a Shield")
         self.setMinimumSize(QSize(650, 350))
         self.resize(QSize(810,490))
+        self.accountUsername = ''
         
         
         #Widgets
@@ -97,9 +98,12 @@ class KeyManager(QMainWindow):
         self.show()
         
     def authButtonClicked(self):
-        self.authDialog.show()
-        self.authDialog.raise_()
-        
+        if not self.accountUsername:
+            self.authDialog.show()
+            self.authDialog.raise_()
+        else: 
+            self.removeAccount()
+            
     def sidebarButtonClicked(self, button:QPushButton):
         button.setEnabled(False)
         for btn in self.sidebarItemsBox.findChildren(QPushButton):
@@ -118,9 +122,15 @@ class KeyManager(QMainWindow):
         self.switchToTab(button.buttonType.value)
 
     def addAccount(self, username):
-        self.authButton.setText("Сменить аккаунт")
+        self.accountUsername = username
+        self.authButton.setText("Выйти из аккаунта")
         self.accountLabel.setText(username)
         self.accountLabel.setVisible(True)
+
+    def removeAccount(self):
+        self.accountUsername = ""
+        self.authButton.setText("Войти в аккаунт")
+        self.accountLabel.setVisible(False)
 
     def switchToTab(self, tab: Tabs):
         match tab:
