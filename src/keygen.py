@@ -1,4 +1,4 @@
-from PySide6.QtGui import QClipboard,QFont
+from PySide6.QtGui import QClipboard,QFont,QImage,QIcon,QPixmap
 from PySide6.QtWidgets import QVBoxLayout, QWidget,QPushButton, \
 QHBoxLayout, QLabel,QGridLayout,QLineEdit,QCheckBox,QSpinBox
 from PySide6.QtCore import Qt
@@ -30,8 +30,10 @@ class KeygenTab(QWidget):
         
         self.lengthBox = QWidget(self)
         self.lengthLabel = QLabel(self.lengthBox)
-        self.lengthLabel.setText("Длина пароля")
+        self.lengthLabel.setText("Длина пароля:")
         self.lengthInput = QSpinBox(self.lengthBox)
+        self.lengthInput.setMinimum(1)
+        self.lengthInput.setMaximum(128)
         self.lengthInput.setValue(16)
         # self.lengthSlider TODO:
         
@@ -51,12 +53,18 @@ class KeygenTab(QWidget):
         
         self.generatorBox=QWidget(self)
         self.generateButton=QPushButton("Сгенерировать", self.generatorBox)
+        self.generateButton.setMinimumSize(110,24)
         self.generateButton.clicked.connect(self.generate)
         self.generateField=QLineEdit(self.generatorBox)
         self.generateField.setFont("Courier")
         self.generateField.setPlaceholderText("Здесь будет ваш сгенерированный пароль...")
         self.generateField.setReadOnly(True)
-        self.copyButton=QPushButton("КП",self.generatorBox)
+        self.copyButton=QPushButton(self.generatorBox)
+        self.copyButton.setMinimumSize(24,24)
+        icon = QImage("resources/copyIcon.png")
+        icon.invertPixels(QImage.InvertMode.InvertRgb)
+        self.copyButton.setIcon(QIcon(QPixmap(icon)))
+        # self.copyButton.set
         self.copyButton.clicked.connect(self.copyToClipboard)
 
         ##Layouts

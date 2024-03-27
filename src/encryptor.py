@@ -47,7 +47,7 @@ class EncryptorTab(QWidget):
         self.inputField.setPlaceholderText("Введите текст для шифровки")
         
         self.encryptButton = QPushButton("Зашифровать", self)
-        self.encryptButton.setFixedWidth(200)
+        self.encryptButton.setMinimumSize(180,24)
         self.encryptButton.clicked.connect(self.encrypt)
         
         self.encryptionSelectBox = QWidget(self)
@@ -72,6 +72,7 @@ class EncryptorTab(QWidget):
         self.resultLabelBox = QWidget(self.resultBox)
         self.resultLabel = QLabel("Результат:", self.resultLabelBox)
         self.resultCopyButton = QPushButton("Скопировать",self.resultLabelBox)
+        self.resultCopyButton.setMinimumSize(95,24)
         self.resultCopyButton.clicked.connect(self.copyToClipboard)
         self.resultTextField = QTextEdit("Здесь появится зашифрованный текст...")
         self.resultTextField.setReadOnly(True)

@@ -6,6 +6,7 @@ from PySide6.QtCore import Signal, QObject ,QSize,Qt
 from encryptor import EncryptorTab
 from keygen import KeygenTab
 from user_guide import InfoTab
+from authorization import AuthDialog
 from typings import *
 
 class KeyManager(QMainWindow):
@@ -14,10 +15,11 @@ class KeyManager(QMainWindow):
         self.setFont("Helvetica")
         self.setWindowTitle("Steps with a Shield")
         self.setMinimumSize(QSize(650, 350))
-        self.resize(QSize(730,440))
+        self.resize(QSize(810,490))
         
         
         #Widgets
+        self.authDialog = AuthDialog()
         self.centralWidget_ = QWidget()
         self.centralWidget_.setSizePolicy(QSizePolicy.Policy.Expanding,
                                    QSizePolicy.Policy.Expanding)
@@ -35,15 +37,16 @@ class KeyManager(QMainWindow):
         self.keygenButton = SidebarButton(SidebarButtons.Keygen, self.sidebarItemsBox)
         self.encryptorButton = SidebarButton(SidebarButtons.Encryptor, self.sidebarItemsBox)
         self.infoButton.clicked.connect(
-            lambda: self.sidebarButtonPressed(self.infoButton)
+            lambda: self.sidebarButtonClicked(self.infoButton)
         )
         self.keygenButton.clicked.connect(
-            lambda: self.sidebarButtonPressed(self.keygenButton)
+            lambda: self.sidebarButtonClicked(self.keygenButton)
         )
         self.encryptorButton.clicked.connect(
-            lambda: self.sidebarButtonPressed(self.encryptorButton)
+            lambda: self.sidebarButtonClicked(self.encryptorButton)
         )
-        self.logoutButton = SidebarButton(SidebarButtons.Authorization, self.sidebar)
+        self.authButton = SidebarButton(SidebarButtons.Authorization, self.sidebar)
+        self.authButton.clicked.connect(self.authButtonClicked)
         
         self.infoTab = InfoTab(self.contentsWidget)
         self.encryptorTab = EncryptorTab(self.contentsWidget)
@@ -62,8 +65,8 @@ class KeyManager(QMainWindow):
         
         self.sidebarLayout = QVBoxLayout(self.sidebar)
         self.sidebarLayout.addWidget(self.sidebarItemsBox)
-        self.sidebarLayout.addWidget(self.logoutButton)
-        self.sidebarLayout.setAlignment(self.logoutButton, Qt.AlignmentFlag.AlignBottom)
+        self.sidebarLayout.addWidget(self.authButton)
+        self.sidebarLayout.setAlignment(self.authButton, Qt.AlignmentFlag.AlignBottom)
         self.sidebarLayout.setContentsMargins(8,8,8,8)
         self.sidebarLayout.setSpacing(0)
         self.sidebar.setLayout(self.sidebarLayout)
@@ -82,7 +85,11 @@ class KeyManager(QMainWindow):
         
         self.show()
         
-    def sidebarButtonPressed(self, button:QPushButton):
+    def authButtonClicked(self):
+        self.authDialog.show()
+        self.authDialog.raise_()
+        
+    def sidebarButtonClicked(self, button:QPushButton):
         button.setEnabled(False)
         for btn in self.sidebarItemsBox.findChildren(QPushButton):
             if btn!=button:
@@ -109,16 +116,19 @@ class KeyManager(QMainWindow):
                 self.contentsWidget.setCurrentWidget(self.encryptorTab)
         pass
     
+
+
 class SidebarButton(QPushButton):
     buttonType: SidebarButtons
     style = """
     QPushButton {
         color: white;
-        border-radius:10px;
+        border-radius:5px;
         border:none;
         font-weight:600;
         font-size:14px;
         text-align:left;
+        height:100px;
     }
     QPushButton:hover { background-color:#2B5091 }
     QPushButton:checked { background-color:#3464B6; border:none }
