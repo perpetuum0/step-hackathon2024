@@ -1,8 +1,10 @@
 if __name__ == "__main__":
     import sys
-    from app import KeyManager
-    import db
     from PySide6.QtWidgets import QApplication
+    from app import KeyManager
+    from log import log_open, log_close
+    import db
+    log_open()
     app = QApplication()
     app.setStyleSheet("""
     QPushButton {
@@ -19,4 +21,5 @@ if __name__ == "__main__":
     keyManager = KeyManager()
     app.exec()
     db.close()
+    log_close()
     sys.exit()

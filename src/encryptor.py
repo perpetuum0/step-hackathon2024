@@ -5,7 +5,7 @@ from PySide6.QtCore import Qt
 
 from Crypto.Hash import SHA256, SHA512, TupleHash128,TupleHash256,BLAKE2b,BLAKE2s
 from typings import EncryptionAlgo
-
+from log import log
 class Encryptor:
     def __init__(self):
         self.hashObject = SHA256.new()
@@ -25,7 +25,7 @@ class Encryptor:
             case EncryptionAlgo.BLAKE2b:
                 self.hashObject = BLAKE2b.new()
             case _:
-                pass #TODO: error handling
+                log(f"encryptor.py: unexpected hash algrorithm provided ({newAlgo})")
     
     def encrypt(self, data:str):
         self.hashObject.update(data.encode())
@@ -138,7 +138,7 @@ class EncryptorTab(QWidget):
             case self.BLAKE2bButton:
                 newAlgo=EncryptionAlgo.BLAKE2b
             case _:
-                pass #TODO: error handling
+                log(f"encryptor.py: button doesn't match any of the algorithms ({button})")
         self.encryptor.setAlgo(newAlgo)
     
     def copyToClipboard(self):

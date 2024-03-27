@@ -2,8 +2,11 @@ from PySide6.QtGui import QIcon, QAction,QPixmap,QIntValidator,QClipboard
 from PySide6.QtWidgets import QApplication, QVBoxLayout, QTextEdit, QWidget,QPushButton,QSizePolicy,QMainWindow, \
 QHBoxLayout, QLabel, QButtonGroup,QRadioButton, QGridLayout,QLineEdit,QScrollArea,QCheckBox,QSpinBox
 from PySide6.QtCore import Signal, QObject ,QSize, Qt
+from log import log
 
 class InfoTab(QWidget):
+    article_path = "./resources/article.html"
+    
     def __init__(self,parent) -> None:
         super(InfoTab, self).__init__(parent)
         self.infoTextArea = QScrollArea(self)
@@ -18,10 +21,11 @@ class InfoTab(QWidget):
         self.infoTextArea.setStyleSheet("border:none")
         self.infoTextArea.setWidgetResizable(True)
         
-        #TODO error handling
-        with open("./resources/article.html", "r") as article:
-            self.infoText.setText(article.read())
-            
+        try:
+            with open(self.article_path, "r") as article:
+                self.infoText.setText(article.read())
+        except FileNotFoundError:
+            log("user_guide.py: article file not found at", self.article_path)
         #Layouts
         infoBoxLayout = QVBoxLayout(self.infoBox)
         infoBoxLayout.addWidget(self.infoText)

@@ -4,19 +4,22 @@ from PySide6.QtWidgets import QApplication, QVBoxLayout, QTextEdit, QWidget,QPus
 from PySide6.QtCore import Signal, QObject ,QSize,Qt
 import db
 from encryptor import encrypt
+from log import log
 class Authorization:
-    #TODO: auth logs
     def signup(username, password) -> bool:
         if not db.check_user(username):
             db.add_user(username, encrypt(password))
+            log("User created with username: "+username)
             return True
         else:
             return False
     
     def login(username, password) -> bool:
         if encrypt(password)==db.get_user_password(username):
+            log("Succesfull login on user '{}'".format(username))
             return True
         else:
+            log("Log in attempt on user '{}'".format(username))
             return False
 
 class HyperlinkLabel(QLabel):
